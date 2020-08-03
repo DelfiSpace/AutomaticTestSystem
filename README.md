@@ -18,7 +18,7 @@ When running the test locally, a timeout of 0.5s is reasonable but when running 
 
 You can run a system test (EPS in this example) by typing:
 
-`pytest --subsystem=EPS` 
+`pytest --system=EPS` 
 
 This command will run all tests associated to the EPS. You can also:
 
