@@ -1,0 +1,10 @@
+###########################################################################################
+#
+# This file is an example for the configuration file, including computer-specific settings. 
+# Please copy and rename it to TestConfig.ini and edit the system-specific settings. 
+# Do not commit the renamed file to the repository as it contains system-specific settings.
+#
+###########################################################################################
+[PQ9EGSE]
+server = 127.0.0.1
+port = 10000

@@ -1,0 +1,9 @@
+
+*.pyc
+*.csv
+*.bin
+*.pq9
+*.pq9_response
+*.html
+__pycache__/
+TestConfig.ini
