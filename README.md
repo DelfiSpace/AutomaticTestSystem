@@ -20,10 +20,12 @@ You can run a system test (EPS in this example) by typing:
 
 `pytest --system=EPS` 
 
-This command will run all tests associated to the EPS. You can also:
+This command will run all tests associated to the EPS. The complete test report will be generated in the same folder (xxxTestReport.html, with xxx being the system name).
+
+You can also:
 
 `pytest --destination=EPS test_PingService.py`
 
-this will run the test_PingService.py test script on the destination sus-system.
+this will run the test_PingService.py test script on the destination sus-system. The complete test report will be generated in the same folder (TestReport.html, without a specific system name).
 
 
