@@ -8,3 +8,4 @@
 [PQ9EGSE]
 server = 127.0.0.1
 port = 10000
+timeout = 1
