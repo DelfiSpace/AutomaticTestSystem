@@ -8,3 +8,8 @@
 [PQ9EGSE]
 server = 127.0.0.1
 port = 10000
+timeout = 10
+
+# Only use this parameter if you test the Software Update Service.
+# Please use the following format so json.loads() can be used
+BinaryFiles = {"OBC": "OBC_FlightSoftware_Hash_SlotNumber.bin", "EPS": "EPS_FlightSoftware_Hash_SlotNumber.bin"}

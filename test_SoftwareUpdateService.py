@@ -16,8 +16,8 @@ SERVICE_NUMBER = 18
 PAYLOAD_SIZE_OFFSET = 3
 ACKNOWLEDGE = 13
 
-def OTAPreparation():
-    SourceFile = 'OBC_FlightSoftware_Dd205fd6Da495588_2.bin'
+def OTAPreparation(destination, BinaryFiles):
+    SourceFile = json.loads(BinaryFiles)[destination]
     stringData = SourceFile.split('_')
     VersionNumber = stringData[-2]
     SlotNumber = stringData[-1].split('.')[0]
@@ -179,8 +179,8 @@ def SendBlocks(pq9_connection, destination, foReq, foRep, num_blocks, datablocks
 def StopOTA(pq9_connection, destination, foReq, foRep):
     processOTACommand(str(SERVICE_NUMBER)+" 1 7", pq9_connection, destination, foReq, foRep, 'Start')
 
-def test_NormalSoftwareUpdate(pq9_connection, destination):
-    fi, foReq, foRep, SlotNumber, md5, VersionNumber, num_blocks, partials, datablocks = OTAPreparation()
+def test_NormalSoftwareUpdate(pq9_connection, destination, BinaryFiles):
+    fi, foReq, foRep, SlotNumber, md5, VersionNumber, num_blocks, partials, datablocks = OTAPreparation(destination, BinaryFiles)
     EraseSlot(pq9_connection, destination, foReq, foRep, SlotNumber)
     StartOTA(pq9_connection, destination, foReq, foRep, SlotNumber)
     SendMetaData(pq9_connection, destination, foReq, foRep, md5, VersionNumber, num_blocks)
