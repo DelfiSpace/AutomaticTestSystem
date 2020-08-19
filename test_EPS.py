@@ -9,28 +9,28 @@ import PQ9Client
 
 def getBusVoltageVariable(i):
    switcher={
-      '1':"B1_voltage",
-      '2':"B2_voltage",
-      '3':"B3_voltage",
-      '4':"B4_voltage",
+      '1':"Bus1Voltage",
+      '2':"Bus2Voltage",
+      '3':"Bus3Voltage",
+      '4':"Bus4Voltage",
       }
    return str(switcher.get(i,0))
 
 def getBusState(i):
    switcher={
-      '1':"B1_state",
-      '2':"B2_state",
-      '3':"B3_state",
-      '4':"B4_state",
+      '1':"Bus1State",
+      '2':"Bus2State",
+      '3':"Bus3State",
+      '4':"Bus4State",
       }
    return str(switcher.get(i,0))
 
-def getBusStatus(i):
+def getBusError(i):
    switcher={
-      '1':"B1_status",
-      '2':"B2_status",
-      '3':"B3_status",
-      '4':"B4_status",
+      '1':"Bus1Error",
+      '2':"Bus2Error",
+      '3':"Bus3Error",
+      '4':"Bus4Error",
       }
    return str(switcher.get(i,0))
    
@@ -116,7 +116,7 @@ def commandBus(pq9_connection, destination, bus):
         return "Bus " + bus + " not ON (supposed to be ON)"
     
     # check if bus status is correct
-    busStatus = json.loads(msg[getBusStatus(bus)])["value"]
+    busStatus = json.loads(msg[getBusError(bus)])["value"]
     if busStatus != "Active":
         return "Bus " + bus + " not Active (supposed to be Active)"
     
@@ -152,7 +152,7 @@ def commandBus(pq9_connection, destination, bus):
         return "Bus " + bus + " not OFF (supposed to be OFF)"
     
     # check if bus status is correct
-    busStatus = json.loads(msg[getBusStatus(bus)])["value"]
+    busStatus = json.loads(msg[getBusError(bus)])["value"]
     if busStatus != "Active":
         return "Bus " + bus + " not Active (supposed to be Active)"
     
