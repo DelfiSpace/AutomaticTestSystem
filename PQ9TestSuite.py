@@ -1,10 +1,10 @@
 global suite 
 
 suite = { 
-'OBC': ['test_OBC.py', 'test_PingService.py', 'test_ResetService.py'],
-'EPS': ['test_EPS.py', 'test_PingService.py', 'test_ResetService.py'],
-'ADCS': ['test_ADCS.py', 'test_PingService.py', 'test_ResetService.py'], 
-'COMMS': ['test_COMMS.py', 'test_PingService.py', 'test_ResetService.py']
+'OBC': ['test_OBC.py', 'test_PingService.py', 'test_ResetService.py', 'test_SoftwareUpdateService.py'],
+'EPS': ['test_EPS.py', 'test_PingService.py', 'test_ResetService.py', 'test_SoftwareUpdateService.py'],
+'ADCS': ['test_ADCS.py', 'test_PingService.py', 'test_ResetService.py', 'test_SoftwareUpdateService.py'], 
+'COMMS': ['test_COMMS.py', 'test_PingService.py', 'test_ResetService.py', 'test_SoftwareUpdateService.py']
 }
     
 def isTest(system, test):

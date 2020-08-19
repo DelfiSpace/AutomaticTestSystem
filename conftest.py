@@ -31,6 +31,10 @@ def pytest_addoption(parser):
     )
     
 @pytest.fixture
+def BinaryFiles():
+    return testConfig['PQ9EGSE']['BinaryFiles']
+
+@pytest.fixture
 def destination(request):
     global destinationAddress
     return destinationAddress
