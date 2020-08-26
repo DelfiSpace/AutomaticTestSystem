@@ -44,7 +44,7 @@ def pq9_connection():
     pq9client = PQ9Client.PQ9Client(
 				testConfig['PQ9EGSE']['server'], 
 				testConfig['PQ9EGSE']['port'], 
-				int(testConfig['PQ9EGSE']['timeout']))
+				float(testConfig['PQ9EGSE']['timeout']))
     pq9client.connect()
 
     yield pq9client
