@@ -7,6 +7,7 @@ import math
 import hashlib
 import crc8
 import json
+import time
 
 BLOCK_SIZE = 32
 MD5_SIZE = 16
@@ -103,7 +104,7 @@ def processOTACommand(payload, pq9_connection, destination, foReq, foRep, normal
     return msg
 
 def EraseSlot(pq9_connection, destination, foReq, foRep, SlotNumber):
-    processOTACommand(str(SERVICE_NUMBER)+" 1 8 "+SlotNumber, pq9_connection, destination, foReq, foRep, 'NoCheck')
+    processOTACommand(str(SERVICE_NUMBER)+" 1 8 "+str(SlotNumber), pq9_connection, destination, foReq, foRep, 'NoCheck')
     processOTACommand(str(SERVICE_NUMBER)+" 1 8 13", pq9_connection, destination, foReq, foRep, 'Start')
 
 def StartOTA(pq9_connection, destination, foReq, foRep, SlotNumber):
@@ -179,7 +180,41 @@ def SendBlocks(pq9_connection, destination, foReq, foRep, num_blocks, datablocks
 def StopOTA(pq9_connection, destination, foReq, foRep):
     processOTACommand(str(SERVICE_NUMBER)+" 1 7", pq9_connection, destination, foReq, foRep, 'Start')
 
+def jumpSlot(pq9_connection, destination, slotNumber):
+    command = {}
+    command["_send_"] = "SendRaw"
+    command["dest"] = getAddress(destination)
+    command["src"] = getAddress('EGSE') 
+    command["data"] = str(SERVICE_NUMBER)+" 1 9 "+str(slotNumber)+" 0"
+    
+    succes, msg = pq9_connection.processCommand(command)
+    assert succes == True, "Error: System is not responding"
+
+    return msg
+
+def tryPing(pq9_connection, destination):
+    command = {}
+    command["_send_"] = "SendRaw"
+    command["dest"] = getAddress(destination)
+    command["src"] = getAddress('EGSE') 
+    command["data"] = "17 1"
+    
+    succes, msg = pq9_connection.processCommand(command)
+
+    return succes, msg
+
+def getVersion(pq9_connection, destination):
+    command = {}
+    command["_send_"] = "SendRaw"
+    command["dest"] = getAddress(destination)
+    command["src"] = getAddress('EGSE') 
+    command["data"] = "18 1 13"
+    
+    succes, msg = pq9_connection.processCommand(command)
+
+    return succes, msg
 def test_NormalSoftwareUpdate(pq9_connection, destination, BinaryFiles):
+    time.sleep(0.5)
     fi, foReq, foRep, SlotNumber, md5, VersionNumber, num_blocks, partials, datablocks = OTAPreparation(destination, BinaryFiles)
     EraseSlot(pq9_connection, destination, foReq, foRep, SlotNumber)
     StartOTA(pq9_connection, destination, foReq, foRep, SlotNumber)
@@ -187,3 +222,45 @@ def test_NormalSoftwareUpdate(pq9_connection, destination, BinaryFiles):
     SendCRC(pq9_connection, destination, foReq, foRep, num_blocks, partials)
     SendBlocks(pq9_connection, destination, foReq, foRep, num_blocks, datablocks)
     StopOTA(pq9_connection, destination, foReq, foRep)
+
+def test_SoftwareUpdateTime(pq9_connection, destination, BinaryFiles):
+    time.sleep(0.5)
+    # assumes last test was succesful and ping is succesful
+    # Hence SLOT1 / SLOT2 is programmed with the target bin
+    fi, foReq, foRep, SlotNumber, md5, VersionNumber, num_blocks, partials, datablocks = OTAPreparation(destination, BinaryFiles)
+    
+    #get version Number of target slot
+    version = 8*[0]
+    print(VersionNumber)
+    for i in range(0,8):
+        version[i] = int(VersionNumber[i*2:(i+1)*2], 16)
+
+    #ensure we are in SLOT0:
+    jumpSlot(pq9_connection, destination, 0)
+    time.sleep(0.5)
+
+    #record time and Jump
+    starttime = time.time()
+    jumpSlot(pq9_connection, destination, 2)
+
+    #wait for device to come alive
+    succes = False
+    while(not succes):
+        succes, msg = tryPing(pq9_connection, destination)
+        #print("try ping!")
+    elapsedtime = time.time() - starttime
+
+    #double check the version number
+    succes, msg = getVersion(pq9_connection, destination)
+    newversion = (json.loads(msg['_raw_']))[6:14]
+    print("Version of bin: %s" % str(version))
+    print("Version of SLOT: %s" % str(newversion))
+    print("Time till boot in new slot: %.2f" % elapsedtime)
+
+    #make sure the jump was succesful and within 10seconds
+    assert newversion == version, "Bootloader jump not succesful"
+    assert elapsedtime < 10, "Bootloader jump not fast enough!"
+
+    #reset to slot0 for next tests
+    jumpSlot(pq9_connection, destination, 0)
+    time.sleep(0.5)
