@@ -6,7 +6,7 @@ This repository contains the automatic test scripts used for the different subsy
 
 These scripts are based upon pyTest, pyTest TestConfig and pyTest-HTML. Before you can execute these tests, you need to install them by typing:
 
-`pip install pytest pytest-html pytest-config`
+`pip install pytest pytest-html pytest-testconfig`
 
 ## Configuration
 
