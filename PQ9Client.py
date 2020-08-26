@@ -53,7 +53,7 @@ class PQ9Client:
             rxMsg = await asyncio.wait_for(self.pq9reader.readline(), timeout=self.TIMEOUT)
             return True, rxMsg
         except asyncio.TimeoutError:
-            print("PQ9EGSE Reply Timeout!")
+            #print("PQ9EGSE Reply Timeout!")
             return False, []
 
     def processCommand(self, command):

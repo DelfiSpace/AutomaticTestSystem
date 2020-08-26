@@ -231,7 +231,6 @@ def test_SoftwareUpdateTime(pq9_connection, destination, BinaryFiles):
     
     #get version Number of target slot
     version = 8*[0]
-    print(VersionNumber)
     for i in range(0,8):
         version[i] = int(VersionNumber[i*2:(i+1)*2], 16)
 
@@ -252,13 +251,13 @@ def test_SoftwareUpdateTime(pq9_connection, destination, BinaryFiles):
 
     #double check the version number
     succes, msg = getVersion(pq9_connection, destination)
-    newversion = (json.loads(msg['_raw_']))[6:14]
-    print("Version of bin: %s" % str(version))
-    print("Version of SLOT: %s" % str(newversion))
-    print("Time till boot in new slot: %.2f" % elapsedtime)
+    slotversion = (json.loads(msg['_raw_']))[6:14]
+    print("Version of Bin: %s" % str(version))
+    print("Version of SLOT: %s" % str(slotversion))
+    print("Time till boot in slot: %.2f s" % elapsedtime)
 
     #make sure the jump was succesful and within 10seconds
-    assert newversion == version, "Bootloader jump not succesful"
+    assert slotversion == version, "Bootloader jump not succesful"
     assert elapsedtime < 10, "Bootloader jump not fast enough!"
 
     #reset to slot0 for next tests
