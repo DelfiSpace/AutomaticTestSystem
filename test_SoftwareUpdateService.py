@@ -7,6 +7,7 @@ import math
 import hashlib
 import crc8
 import json
+import time
 
 BLOCK_SIZE = 32
 MD5_SIZE = 16
@@ -179,6 +180,18 @@ def SendBlocks(pq9_connection, destination, foReq, foRep, num_blocks, datablocks
 def StopOTA(pq9_connection, destination, foReq, foRep):
     processOTACommand(str(SERVICE_NUMBER)+" 1 7", pq9_connection, destination, foReq, foRep, 'Start')
 
+def OneTimeBoot(pq9_connection, destination, foReq, foRep, SlotNumber):
+    processOTACommand(str(SERVICE_NUMBER)+" 1 9 "+str(SlotNumber)+" 0", pq9_connection, destination, foReq, foRep, 'Start')
+
+def CheckSoftwareVersion(pq9_connection, destination, foReq, foRep, VersionNumber):
+    msg = processOTACommand(str(SERVICE_NUMBER)+" 1 13", pq9_connection, destination, foReq, foRep, 'Start')
+    payloadSize = int( json.loads(msg['Size'])['value'] )
+    intList = json.loads(msg['_raw_'])[6:(payloadSize + 3)]
+    hexList = [hex(i) for i in intList]
+    hexString = "".join(hexList).replace('0x','').lstrip('0')
+    VersionNumber = VersionNumber.lower().lstrip('0')
+    assert hexString == VersionNumber, "Error: Wrong version number"
+
 def test_NormalSoftwareUpdate(pq9_connection, destination, BinaryFiles):
     fi, foReq, foRep, SlotNumber, md5, VersionNumber, num_blocks, partials, datablocks = OTAPreparation(destination, BinaryFiles)
     EraseSlot(pq9_connection, destination, foReq, foRep, SlotNumber)
@@ -187,3 +200,6 @@ def test_NormalSoftwareUpdate(pq9_connection, destination, BinaryFiles):
     SendCRC(pq9_connection, destination, foReq, foRep, num_blocks, partials)
     SendBlocks(pq9_connection, destination, foReq, foRep, num_blocks, datablocks)
     StopOTA(pq9_connection, destination, foReq, foRep)
+    OneTimeBoot(pq9_connection, destination, foReq, foRep, SlotNumber)
+    time.sleep(5)
+    CheckSoftwareVersion(pq9_connection, destination, foReq, foRep, VersionNumber)
