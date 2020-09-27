@@ -213,6 +213,7 @@ def getVersion(pq9_connection, destination):
     succes, msg = pq9_connection.processCommand(command)
 
     return succes, msg
+
 def test_NormalSoftwareUpdate(pq9_connection, destination, BinaryFiles):
     time.sleep(0.5)
     fi, foReq, foRep, SlotNumber, md5, VersionNumber, num_blocks, partials, datablocks = OTAPreparation(destination, BinaryFiles)
@@ -263,3 +264,4 @@ def test_SoftwareUpdateTime(pq9_connection, destination, BinaryFiles):
     #reset to slot0 for next tests
     jumpSlot(pq9_connection, destination, 0)
     time.sleep(0.5)
+
