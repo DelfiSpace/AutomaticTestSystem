@@ -43,7 +43,6 @@ class PQ9Client:
            raise PQ9ClientConnectionClosed('Connection closed')
         status, msg = self.loop.run_until_complete(self.AwaitedGetFrame())
         if(status == True):
-            # return status, json.loads(msg)["_raw_"]
             return status, json.loads(msg)
         else:
             return status, []
