@@ -6,9 +6,9 @@ from threading import Thread
 
 class SubSystemEmulator:
 
-    def __init__(self, pq9_connection, source):
+    def __init__(self, pq9_connection, address):
         self.pq9Handler = pq9_connection
-        self.src = source
+        self.address = address
         self.running = False
         
     def start(self):
