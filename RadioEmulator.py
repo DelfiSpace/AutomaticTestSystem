@@ -10,12 +10,16 @@ class RadioEmulator(SubSystemEmulator):
     def __init__(self, pq9_connection):
         super().__init__(pq9_connection, "COMMS")
         self.uplinkMessages = []
+        self.TXmessageHandler = None
         
     def newRXMessage(self, msg):
         # limit the number of messages in the queue to 255
         if len(self.uplinkMessages) < 256:
             self.uplinkMessages.append(msg)
         
+    def setTXMessageHandler(self, handler):
+        self.TXmessageHandler = handler
+            
     def checkMessage(self, msg):
         # is there a raw key in the dictionary?      
         if "_raw_" in msg:
@@ -68,8 +72,13 @@ class RadioEmulator(SubSystemEmulator):
                          
                     # is a get send message request?
                     elif raw_message[5] == 9:
-                        print("Send message: " + str(msg))
+                        if self.TXmessageHandler != None:
+                            # only extract the message payload
+                            self.TXmessageHandler(raw_message[7:-2])
                         
                     else:
                         print(str(msg))
                         
+                # is a telemetry service request?
+                elif raw_message[3] == 3 and raw_message[4] == 1:
+                    print("Telemetry request")
