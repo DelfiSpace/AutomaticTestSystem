@@ -31,7 +31,7 @@ class PQ9Client:
         self.loop.run_until_complete(self.AwaitedConnect())
 
     async def AwaitedConnect(self):
-        self.pq9reader, self.pq9writer = await asyncio.open_connection(self.TCP_IP, self.TCP_PORT, loop=self.loop)
+        self.pq9reader, self.pq9writer = await asyncio.open_connection(self.TCP_IP, self.TCP_PORT)
         self.closed = False
 
     def sendFrame(self, inputFrame):
